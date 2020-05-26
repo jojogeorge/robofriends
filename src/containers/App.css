@@ -1,5 +1,15 @@
+@font-face {
+  font-family: 'SEGA LOGO FONT';
+  font-style: normal;
+  font-weight: normal;
+  src: local('SEGA LOGO FONT'), url('SEGA.woff') format('woff');
+  }
 .App {
   text-align: center;
+}
+h1 {
+  font-family: 'SEGA LOGO FONT';
+  color: rgb(18, 137, 167);
 }
 
 .App-logo {
