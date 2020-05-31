@@ -1,44 +1,47 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux'
 import './App.css';
 import CardList from '../components/CardList';
 import Scroll from '../components/Scroll';
 import SearchBox from '../components/SearchBox';
 import ErrorBoundry from '../components/ErrorBoundry';
+import {setSearchField, requestRobots} from '../actions.js'
 
+
+const mapStateToProps = state => {
+  return {
+    searchField: state.searchRobots.searchField,
+    robots: state.requestRobots.robots,
+    isPending: state.requestRobots.isPending,
+    error: state.requestRobots.error
+  }
+}
+const mapDispatchToProps = (dispatch) => {
+  return {
+  onSearchChanges: (event) => dispatch(setSearchField(event.target.value)),
+  onRequestRobots:() =>  dispatch(requestRobots())
+  }
+}
 
 class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      robots: [],
-      searchField: ''
-    }
-  }
+
   componentDidMount() {
-    fetch('https://jsonplaceholder.typicode.com/users')
-    .then(response=> response.json())
-    .then(users=> this.setState({robots: users}))
-    
+    this.props.onRequestRobots();
 
   }
 
-  onSearchChanges= (event) => {
-
-    this.setState({searchField: event.target.value});
-
-    };
   render() {
-    const {robots, searchField} = this.state; // destructring
+    const {searchField, onSearchChanges, robots, isPending} = this.props;
     const filterRobots = robots.filter(robot=>{
       return robot.name.toLowerCase().includes(searchField.toLowerCase());
     });
-    if(!robots.length) {
+    if(isPending) {
       return (<h2>Loading</h2>)
     }else {
       return (
         <div className="tc">
           <h1>Robo Friends</h1>
-          <SearchBox searchChange={this.onSearchChanges}></SearchBox>
+          <SearchBox searchChange={onSearchChanges}></SearchBox>
           <Scroll>
             <ErrorBoundry>
               <CardList robots={filterRobots}/>
@@ -54,4 +57,4 @@ class App extends Component {
   
 }
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App);
